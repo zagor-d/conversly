@@ -1,0 +1,28 @@
+name: Deploy to server
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up SSH key
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}  # Додай свій приватний SSH ключ у налаштуваннях GitHub Secrets
+
+    - name: Deploy Chatwoot to server
+      run: |
+        ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+          cd /var/www/chatwoot
+          git pull origin main
+          docker-compose down
+          docker-compose up --build -d
+        EOF
