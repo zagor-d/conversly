@@ -18,6 +18,10 @@ jobs:
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}  # Додай свій приватний SSH ключ у налаштуваннях GitHub Secrets
 
+    - name: Test SSH connection  # Додаємо крок для перевірки SSH підключення
+      run: |
+        ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "echo 'SSH connection works!'"
+        
     - name: Deploy Chatwoot to server
       run: |
         ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
